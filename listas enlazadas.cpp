@@ -1,67 +1,110 @@
 #include <iostream>
+#include <string>
+
 using namespace std;
 
-// Definici髇 de la estructura Nodo
-struct Nodo {
-    int valor;
-    Nodo* siguiente;
-    
-    // Constructor para crear un Nodo
-    Nodo(int v) {
-        valor = v;
-        siguiente = NULL; // Usamos NULL en lugar de nullptr
+class Estudiante {
+public:
+    string nombre;
+    string materia;
+    Estudiante* siguiente;
+
+    Estudiante() {
+        nombre = "";
+        materia = "";
+        siguiente = NULL;
+    }
+
+    Estudiante(const string& nombre, const string& materia) {
+        this->nombre = nombre;
+        this->materia = materia;
+        this->siguiente = NULL;
     }
 };
 
-// Funci髇 para agregar un nodo al final de la lista
-void agregarNodo(Nodo*& cabeza, int valor) {
-    Nodo* nuevoNodo = new Nodo(valor);
-    
-    if (cabeza == NULL) {  // Usamos NULL en lugar de nullptr
-        cabeza = nuevoNodo;
+void registrarEstudiante(Estudiante*& cabeza, const string& nombre, const string& materia) {
+    Estudiante* nuevoEstudiante = new Estudiante(nombre, materia);
+
+    if (cabeza == NULL) {
+        cabeza = nuevoEstudiante;
     } else {
-        Nodo* temp = cabeza;
-        while (temp->siguiente != NULL) {  // Usamos NULL en lugar de nullptr
+        Estudiante* temp = cabeza;
+        while (temp->siguiente != NULL) {
             temp = temp->siguiente;
         }
-        temp->siguiente = nuevoNodo;
+        temp->siguiente = nuevoEstudiante;
     }
+
+    cout << "Estudiante registrado: " << nombre << " - " << materia << endl;
 }
 
-// Funci髇 para imprimir la lista enlazada
-void imprimirLista(Nodo* cabeza) {
-    Nodo* temp = cabeza;
-    while (temp != NULL) {  // Usamos NULL en lugar de nullptr
-        cout << temp->valor << " -> ";
+void procesarInscripcion(Estudiante*& cabeza) {
+    if (cabeza == NULL) {
+        cout << "No hay estudiantes inscritos." << endl;
+        return;
+    }
+
+    Estudiante* temp = cabeza;
+    cout << "Procesando inscripci贸n de: " << temp->nombre << " - " << temp->materia << endl;
+    cabeza = cabeza->siguiente;
+    delete temp;
+}
+
+void mostrarInscripciones(Estudiante* cabeza) {
+    if (cabeza == NULL) {
+        cout << "No hay estudiantes inscritos." << endl;
+        return;
+    }
+
+    cout << "Estudiantes inscritos:" << endl;
+    Estudiante* temp = cabeza;
+    while (temp != NULL) {
+        cout << "- " << temp->nombre << " (" << temp->materia << ")" << endl;
         temp = temp->siguiente;
-    }
-    cout << "NULL" << endl;  // Usamos NULL en lugar de nullptr
-}
-
-// Funci髇 para eliminar la lista y liberar la memoria
-void eliminarLista(Nodo*& cabeza) {
-    Nodo* temp;
-    while (cabeza != NULL) {  // Usamos NULL en lugar de nullptr
-        temp = cabeza;
-        cabeza = cabeza->siguiente;
-        delete temp;
     }
 }
 
 int main() {
-    Nodo* lista = NULL;  // Usamos NULL en lugar de nullptr
+    Estudiante* cabeza = NULL;
 
-    // Agregar nodos a la lista
-    agregarNodo(lista, 10);
-    agregarNodo(lista, 20);
-    agregarNodo(lista, 30);
+    int opcion;
+    string nombre, materia;
 
-    // Imprimir la lista
-    cout << "Lista enlazada: ";
-    imprimirLista(lista);
+    do {
+        cout << "\n--- Sistema de Inscripci贸n a Ex谩menes ---" << endl;
+        cout << "1. Registrar estudiante" << endl;
+        cout << "2. Procesar inscripci贸n" << endl;
+        cout << "3. Mostrar estudiantes inscritos" << endl;
+        cout << "4. Salir" << endl;
+        cout << "Selecciona una opci贸n: ";
+        cin >> opcion;
+        cin.ignore();
 
-    // Eliminar la lista
-    eliminarLista(lista);
+        switch (opcion) {
+            case 1:
+                cout << "Nombre del estudiante: ";
+                getline(cin, nombre);
+                cout << "Materia para el examen: ";
+                getline(cin, materia);
+                registrarEstudiante(cabeza, nombre, materia);
+                break;
+            case 2:
+                procesarInscripcion(cabeza);
+                break;
+            case 3:
+                mostrarInscripciones(cabeza);
+                break;
+            case 4:
+                cout << "Saliendo del sistema." << endl;
+                break;
+            default:
+                cout << "Opci贸n no v谩lida. Intenta de nuevo." << endl;
+        }
+    } while (opcion != 4);
+
+    while (cabeza != NULL) {
+        procesarInscripcion(cabeza);
+    }
 
     return 0;
 }
